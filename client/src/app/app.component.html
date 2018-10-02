@@ -1,0 +1,61 @@
+<mat-sidenav-container fullscreen>
+  <mat-sidenav #start>
+    <mat-nav-list>
+      <a mat-list-item (click)="showCourseDialog()">
+
+        <mat-icon>library_books</mat-icon>
+        <span>Courses</span>
+      </a>
+      <a mat-list-item routerLink="about">
+        <mat-icon>question_answer</mat-icon>
+        <span>About</span>
+      </a>
+      <a mat-list-item>
+        <mat-icon>person_add</mat-icon>
+        <span>Register</span>
+      </a>
+      <a mat-list-item (click)="showLoginDialog()">
+        <mat-icon>account_circle</mat-icon>
+        <span>Login</span>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-toolbar color="primary">
+    <mat-toolbar-row>
+      <button mat-icon-button (click)="start.open('mouse')">
+        <mat-icon>menu</mat-icon>
+      </button>
+  
+      <span>Xcel Software Service</span>
+      <span class="example-fill-remaining-space"></span>
+      <span class="align-center"></span>
+      <span class="example-spacer"></span>
+      <button mat-button routerLink="about">About</button>
+      <button mat-button>Services</button>
+      <button mat-button routerLink="contact">Contact</button>
+  
+      <button mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item>
+          <mat-icon>dialpad</mat-icon>
+          <span>Redial</span>
+        </button>
+        <button mat-menu-item disabled>
+          <mat-icon>voicemail</mat-icon>
+          <span>Check voicemail</span>
+        </button>
+        <button mat-menu-item>
+          <mat-icon>notifications_off</mat-icon>
+          <span>Disable alerts</span>
+        </button>
+      </mat-menu>
+    </mat-toolbar-row>
+
+  </mat-toolbar>
+
+  <router-outlet></router-outlet>
+
+</mat-sidenav-container>
