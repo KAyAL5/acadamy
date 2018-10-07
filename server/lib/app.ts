@@ -1,6 +1,7 @@
 import * as express from "express";
 import * as bodyParser from "body-parser";
 import * as mongoose from "mongoose";
+import * as cors from 'cors';
 
 import { CmrRoutes } from "./routes/crmRoutes";
 import { PushNotificationRoutes } from "./routes/pushNotificationRoutes";
@@ -29,8 +30,12 @@ class App {
         this.app.use(bodyParser.json());
         //support application/x-www-form-urlencoded post data
         this.app.use(bodyParser.urlencoded({ extended: false }));
-    }
-
+        // add cors 
+        // var cors = require('cors');
+        this.app.use(cors({
+        origin:'http://localhost:4200'
+        }));
+}
     private mongoSetup(): void{
         mongoose.Promise = global.Promise;
         mongoose.connect(this.mongoUrl);    
