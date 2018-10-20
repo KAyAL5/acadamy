@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PushNotificationComponent } from './push-notifactions.component';
+import { RegistrationDialogComponent } from './register.component';
 
-describe('PushnotifactionsComponent', () => {
-  let component: PushNotificationComponent;
-  let fixture: ComponentFixture<PushNotificationComponent>;
+describe('InputComponent', () => {
+  let component: RegistrationDialogComponent;
+  let fixture: ComponentFixture<RegistrationDialogComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PushNotificationComponent ]
+      declarations: [ RegistrationDialogComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PushNotificationComponent);
+    fixture = TestBed.createComponent(RegistrationDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,4 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -10,21 +11,17 @@ import { MaterialModule } from './modules/material.module';
 import { HomeModule } from './modules/home.module';
 import { ComponentModule } from './modules/Component.module';
 
-// import { ServiceModule } from './modules/service.module';
-import { DialogService } from './services/utilities/dialog.service';
-import { NotificationService } from './services/utilities/notification.service';
-import { PushNotificationsService } from './services/utilities/push.notification.service';
+ import { DialogService, SnackBarService } from './services/index';
 
 import { AppComponent } from './app.component';
-import { LoginDialogComponent } from './components/shared/dialog/login/login.component';
-import { CourseDialogComponent } from './components/shared/dialog/course/course-dialog.component';
-import { ConfirmDialogComponent } from './components/shared/dialog/confirm/confirm.component';
-import { PushNotificationComponent } from './components/shared/pushnotifactions/push-notifactions.component';
+import { RegistrationDialogComponent, LoginDialogComponent, CourseDialogComponent, ConfirmDialogComponent } from './components/shared/dialog/index'
+
 // import { environment } from '../environments/environment';
 
 @NgModule({
   imports: [
     BrowserModule,
+    HttpClientModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     MaterialModule,
@@ -36,20 +33,21 @@ import { PushNotificationComponent } from './components/shared/pushnotifactions/
   ],
   declarations: [
     AppComponent,
+    RegistrationDialogComponent,
     LoginDialogComponent,
     ConfirmDialogComponent,
-    CourseDialogComponent,
-    PushNotificationComponent,
+    CourseDialogComponent
  ],
  entryComponents: [
+  RegistrationDialogComponent,
   LoginDialogComponent,
   ConfirmDialogComponent,
   CourseDialogComponent
 ],
   providers: [
     DialogService,
-    NotificationService,
-    PushNotificationsService],
+    SnackBarService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

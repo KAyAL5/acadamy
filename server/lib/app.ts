@@ -1,24 +1,27 @@
 import * as express from "express";
 import * as bodyParser from "body-parser";
+import * as cookieParser from 'cookie-parser';
 import * as mongoose from "mongoose";
-import * as cors from 'cors';
+
+import config from '../lib/config/config';
 
 import { CmrRoutes } from "./routes/crmRoutes";
-import { PushNotificationRoutes } from "./routes/pushNotificationRoutes";
+import { UserRoutes } from "./routes/UserRoutes";
 
 class App {
-
+    
+    public mongoUrl: string = config.DB_HOST; 
     public app: express.Application;
-    public mongoUrl: string = 'mongodb://localhost:27017/CRMdb';
-    public routePrv: CmrRoutes = new CmrRoutes();
-    public routesPushNotification: PushNotificationRoutes = new PushNotificationRoutes();
+
+    public routeCrm: CmrRoutes = new CmrRoutes();
+    public routeuser: UserRoutes = new UserRoutes();
 
     constructor() {
         this.app = express();
         this.config();
         this.mongoSetup();
-        this.routePrv.routes(this.app);   
-        this.routesPushNotification.routes(this.app);
+        this.routeuser.routes(this.app);
+        this.routeCrm.routes(this.app);
         //==================================
         // let router: express.Router = express.Router();
         // router.use('/api/cmr',CmrRoutes);
@@ -30,15 +33,12 @@ class App {
         this.app.use(bodyParser.json());
         //support application/x-www-form-urlencoded post data
         this.app.use(bodyParser.urlencoded({ extended: false }));
-        // add cors 
-        // var cors = require('cors');
-        this.app.use(cors({
-        origin:'http://localhost:4200'
-        }));
-}
+        this.app.use(cookieParser());
+    }
+
     private mongoSetup(): void{
         mongoose.Promise = global.Promise;
-        mongoose.connect(this.mongoUrl);    
+        mongoose.connect(this.mongoUrl, {useCreateIndex: true, useNewUrlParser: true });    
     }
 
 }

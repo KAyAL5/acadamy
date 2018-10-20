@@ -10,3 +10,6 @@
 /server/dist
 /server/dist/*
 /server/package-lock.json
+/serverjs/node_modules
+/serverjs/node_modules/*
+/serverjs/package-lock.json

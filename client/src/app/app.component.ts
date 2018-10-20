@@ -15,6 +15,10 @@ export class AppComponent {
 
   constructor(private dialogSvc: DialogService) { }
 
+  showRegistrationDialog() {
+    this.dialogSvc.showRegistrationDialog();
+  }
+
   showLoginDialog() {
     // this.dialogSvc.data = { username: '', password: ''};
     this.dialogSvc.showLoginDialog();

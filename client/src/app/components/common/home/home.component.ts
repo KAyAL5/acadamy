@@ -1,36 +1,28 @@
 import { Component, OnInit } from '@angular/core';
-import { SwPush, SwUpdate } from '@angular/service-worker';
+import { Router } from '@angular/router';
 
 import { UserService } from '../../../services/users/users.services';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.css'],
+  providers: [UserService]
 })
 export class HomeComponent implements OnInit {
 
   imageUrl: String = '';
-  readonly VAPID_PUBLIC_KEY = 'BLBx-hf2WrL2qEa0qKb-aCJbcxEvyn62GDTyyP9KTS5K7ZL0K7TfmOKSPqp8vQF0DaG8hpSBknz_x3qf5F4iEFo';
-  constructor(private swPush: SwPush, private UserSvc: UserService) { }
+  username = '';
 
-  ngOnInit() {
-    // if (this.swPush.isEnabled) {
-    //    this.swPush.available.subscribe(() => {
-    //   if (confirm('New version available. Load New Version?')) {
-    //     window.location.reload();
-    //   }
-    //    });
-    // }
+  constructor(private _userSvc: UserService, private _router: Router) { 
+    this._userSvc.getUserName()
+    .subscribe(
+      data => this.username = data.toString(),
+      error => alert('token not found')
+     // error => this._router.navigate(['/main/login'])
+    )
   }
 
-  subscribeToNotifications() {
-
-    this.swPush.requestSubscription({
-        serverPublicKey: this.VAPID_PUBLIC_KEY
-    })
-    .then(sub => this.UserSvc.addPushSubscriber(sub).subscribe())
-    .catch(err => console.error('Could not subscribe to notifications', err));
-}
+  ngOnInit() {  }
 
 }
