@@ -1,80 +1,108 @@
+import { Request, Response, NextFunction } from 'express';
 import * as mongoose from 'mongoose';
+import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
-import { Request, Response } from 'express';
 
-import { UserSchema } from '../models/user';
+import config from '../config/config';
 
-var express = require('express');
-var router = express.Router();
-//var User = require('../models/user');
+import { UserSchema } from '../models/userModel';
 
 const User = mongoose.model('User', UserSchema);
 
 export class UserController {
 
-    decodedToken: String = '';
+    decodedtoken: string ='';
 
-    // post
-    public register(req: Request, res: Response) {
+    constructor() {}
 
-        //let newUser = new User(req.body);
+    public async addNewUser(req: Request, res: Response) {
+        const hash = await bcrypt.hash(req.body.password, config.SALT_ROUNDS);
         let newUser = new User({
             email: req.body.email,
             username: req.body.username,
-            password: User.hashPassword(req.body.password),
-            creation_dt: Date.now()
+            password: hash
         });
 
-        let promise = newUser.save();
-        promise.then(function (doc) {
-            return res.status(201).json(doc);
-        })
-        promise.catch(function (err) {
-            return res.status(501).json({ message: 'Error registering user.' })
-        })
+        await newUser.save()
+            .then(function (doc) {
+                return res.status(201).json(doc);
+            })
+            .catch(function (err) {
+                return res.status(501).json({ message: 'Error registering user.' })
+            })
     }
 
-    //post
-    public login(req: Request, res: Response) {
-        let promise = User.findOne({ email: req.body.email }).exec();
-        promise.then(function (user) {
+    public registeredUserlogin(req: Request, res: Response, next: NextFunction) {
+        const promise = User.findOne({ email: req.body.email }).exec();
+
+        promise.then((user) => {
             if (user) {
-                if (user.isValid(req.body.password)) {
+                const isValidUser =  bcrypt.compareSync(req.body.password, user.password);
+                if (isValidUser) {
                     // generate token
-                    let token = jwt.sign({ username: user.username }, 'secret', { expiresIn: '3h' });
+                    const token = jwt.sign({ email: user.email }, config.JWT_ENCRYPTION, { expiresIn: config.JWT_EXPIRATION });
                     return res.status(200).json(token);
                 } else {
-                    return res.status(501).json({ message: ' Invalid Credentials' });
+                    return res.status(501).json({ message: 'Invalid Credentials' });
                 }
             }
             else {
                 return res.status(501).json({ message: 'User email is not registered.' })
             }
-        });
-
+         });
         promise.catch(function (err) {
-            return res.status(501).json({ message: 'Some internal error' });
+            return res.status(501).json({ message: 'Some internal server error' });
         })
     }
 
-    //Get
-    public username(req: Request, res: Response) {
-        this.verifyToken(req, res);
-        router.get('/username', this.verifyToken, function (req, res, next) {
-            return res.status(200).json(this.decodedToken.username);
-        })
+    public activeuser(req: Request, res: Response, next: NextFunction){
+        console.log('req',req);
+        return res.status(200).json(req);
     }
 
-    private verifyToken(req: Request, res: Response) {
-        let token = req.query.token;
-        jwt.verify(token, 'secret', function (err, tokendata) {
+    // Get all users (GET request)
+    public async getUsers(req: Request, res: Response): Promise<any> {
+        await User.find({}, (err, contact) => {
             if (err) {
-                return res.status(400).json({ message: ' Unauthorized request' });
+                res.send(err);
             }
-            if (tokendata) {
-                this.decodedToken = tokendata;
-                //next();
+            res.json(contact);
+        });
+    }
+
+    public getUserByID(req: Request, res: Response) {
+        User.findById(req.params.userId, (err, user) => {
+            if (err) {
+                res.send(err);
             }
-        })
+            res.json(user);
+        });
+    }
+
+    public updateUser(req: Request, res: Response) {
+        User.findOneAndUpdate({ _id: req.params.contactId }, req.body, { new: true }, (err, contact) => {
+            if (err) {
+                res.send(err);
+            }
+            res.json(contact);
+        });
+    }
+
+    public deleteUser(req: Request, res: Response) {
+        User.remove({ _id: req.params.contactId }, (err, contact) => {
+            if (err) {
+                res.send(err);
+            }
+            res.json({ message: 'Successfully deleted contact!' });
+        });
+    }
+
+    private hashPassword(password): string {
+        console.log('hashPassword', password);
+        return bcrypt.hashSync(password, 10);
+    }
+
+    private isValid(password, hashedpassword) {
+        return bcrypt.compareSync(hashedpassword, password);
     }
 }
